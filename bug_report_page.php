@@ -35,6 +35,7 @@
 	require_once( 'last_visited_api.php' );
 	require_once( 'projax_api.php' );
 	require_once( 'collapse_api.php' );
+	require_once( 'tag_api.php' );
 
 	$f_master_bug_id = gpc_get_int( 'm_id', 0 );
 
@@ -155,6 +156,8 @@
 	$tpl_show_os_version = $tpl_show_profiles && in_array( 'os_version', $t_fields );
 	$tpl_show_resolution = in_array('resolution', $t_fields);
 	$tpl_show_status = in_array('status', $t_fields);
+	$tpl_show_tags = in_array( 'tags', $t_fields ) && access_has_global_level( config_get( 'tag_view_threshold' ) );
+	$tpl_can_attach_tag = $tpl_show_tags && !$tpl_force_readonly && access_has_bug_level( config_get( 'tag_attach_threshold' )
 
 	$tpl_show_versions = version_should_show_product_version( $t_project_id );
 	$tpl_show_product_version = $tpl_show_versions && in_array( 'product_version', $t_fields );
@@ -205,6 +208,15 @@
 		</td>
 	</tr>
 <?php }
+
+	# Tag Attachments Form
+	if ( $tpl_can_attach_tag ) {
+		echo '<tr ', helper_alternate_class(), '>';
+		echo '<td class="category">', lang_get( 'tag_attach_long' ), '</td>';
+		echo '<td colspan="5">';
+		print_tag_attach_form( $tpl_bug_id );
+		echo '</td></tr>';
+	}
 
 	if ( $tpl_show_reproducibility ) {
 ?>
